@@ -1,47 +1,40 @@
-// // SPDX-License-Identifier: MIT
-// pragma solidity ^0.8.0;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.7;
 
-// import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-// import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-// // import "./JAV_NFT.sol";
-// // import "./SaleFactory.sol";
+contract O2Token is ERC20, Ownable{
+    event createNFT (uint256 indexed _tokenId, address indexed _owner);
+    event purchaseNFT (uint256 _tokenId);
+    // constructor(string memory name, string memory symbol, uint8 decimal, address JAV_NFT_address) ERC20(name, symbol, decimal) {
+    //     JAV_NFT_Contract = JAV_NFT(JAV_NFT_address);
+    // }
 
-// contract O2Token is ERC20, Ownable{
-//     event createNFT (uint256 indexed _tokenId, address indexed _owner);
-//     event purchaseNFT (uint256 _tokenId);
-//     constructor(string memory name, string memory symbol, uint8 decimal, address JAV_NFT_address) ERC20(name, symbol, decimal) {
-//         JAV_NFT_Contract = JAV_NFT(JAV_NFT_address);
-//     }
+    event mint_call(address indexed from, uint256 amount);
+    //ERC20 contructor 에 필요한 param : (name, symbol)
+    // name : 토큰 이름
+    // symbol : 이름의 더 짧은 버전인 토큰의 기호
+
+    constructor () ERC20("O2Token", "O2") {
+        // decimals 는 토큰 소수점 자리
+        // 소수점 둘째 자릿수로 설정해서 토큰 생성
     
-//     function mint(uint256 amount) public {
-//         _mint(_msgSender(), amount);
-//     }
+        // ERC20의 deciamls는  _setupDecimals 함수를 통해 설정
+        // _setupDecimals 는 생성자에서만 호출 가능
+    }
 
-//     function JavPickup(string memory _tokenURI, uint[3] memory _gene, uint[4] memory _accessory) public returns(uint) {
-//         super.transfer(address(JAV_NFT_Contract),100);
-//         uint tokenId = JAV_NFT_Contract.pickup(_tokenURI, _gene, _accessory);
-//         JAV_NFT_Contract.transferFrom(address(this),msg.sender,tokenId);
-//         emit createNFT(tokenId, msg.sender);
-//         return tokenId;
-//     }
+    function decimals() override public view returns (uint8) {
+        return 2;
+    }
 
-//     function transfer(address recipient, uint256 amount) public override returns (bool) {
-//         super.transfer(recipient,amount);
-//         return true;
-//     }
+    function mint(uint256 amount) public {
+        emit mint_call(msg.sender, amount);
+        _mint(msg.sender, amount);
+    }
 
-//     function purchase(address saleAddress) public returns(uint){
-//         Sale SaleContract = Sale(saleAddress);
-//         require(SaleContract.getcurrencyAddress() == address(this),"bank essue");
-//         uint price = SaleContract.purchasePrice();
-//         uint tokenId = SaleContract.tokenId();
-//         address seller = SaleContract.seller();
-//         transfer(seller,price);
-//         JAV_NFT_Contract.transferFrom(seller,msg.sender,tokenId);
-//         JAV_NFT_Contract.pushSaleData(tokenId,price);
-//         SaleContract.purchase(price,msg.sender);
-//         emit purchaseNFT(tokenId);
-//         return tokenId;
-//     }
-// }
+    function transfer(address recipient, uint256 amount) public override returns (bool) {
+        super.transfer(recipient,amount);
+        return true;
+    }
+}
