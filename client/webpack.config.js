@@ -10,7 +10,14 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "build"),
   },
-  resolve: { extensions },
+  resolve: {
+    extensions,
+    fallback: {
+      http: require.resolve("stream-http"),
+      https: require.resolve("https-browserify"),
+      os: require.resolve("os-browserify/browser"),
+    },
+  },
   devServer: {
     client: {
       overlay: false,
