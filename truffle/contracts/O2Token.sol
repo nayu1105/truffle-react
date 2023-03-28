@@ -24,7 +24,7 @@ contract O2Token is ERC20, Ownable{
         // _setupDecimals 는 생성자에서만 호출 가능
     }
 
-    function decimals() override public view returns (uint8) {
+    function decimals() override public pure returns (uint8) {
         return 2;
     }
 
