@@ -33,8 +33,8 @@ contract O2Token is ERC20, Ownable{
         _mint(msg.sender, amount);
     }
 
-    function transfer(address recipient, uint256 amount) public override returns (bool) {
-        super.transfer(recipient,amount);
+    function transfer(address from, address to, uint256 amount) public returns (bool) {
+        _transfer(from, to, amount);
         return true;
     }
 }

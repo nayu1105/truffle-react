@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import Web3 from "web3";
 import O2Token from "./contracts/O2Token.json";
 import MARSNFT from "./contracts/MARS_NFT.json";
+import SALE_FACTORY from "./contracts/SaleFactory.json";
 
-const SERVER_ACCOUNT = "0xf773bf0A6Fd046e1fF3Ca023E98897d8624A2F16";
+// const SERVER_ACCOUNT = "0xf773bf0A6Fd046e1fF3Ca023E98897d8624A2F16";
 
-const MARS_CONTRACT_ADDRESS = "0x22b8358bFAa9e669a4635c58C5A91E0C7661e52F";
-const O2_CONTRACT_ADDRESS = "0x7ecf4D395268ab61247F03575e489aa20A18faA2";
+const MARS_CONTRACT_ADDRESS = "0xA74810FCD09c968952BaE8a4070cDd71C14870e4";
+const O2_CONTRACT_ADDRESS = "0x4033910d6e54D2c8bc8D9A13bB58D0379E2b3886";
+const SALE_FACTORY_ADDRESS = "0xE9948BB2290Bfe52F95de0923269939114eaE1F3";
 
 function App() {
   const [account, SetAccount] = useState();
@@ -191,6 +193,54 @@ function App() {
     await contract.methods.combNFT(nft1, nft2, nonce).send({ from: account });
   };
 
+  const getNftDetail = async () => {
+    const contract = new web3.eth.Contract(MARSNFT.abi, MARS_CONTRACT_ADDRESS);
+    setDetailNftOwner(await contract.methods.owner(saleNftId).call());
+  };
+
+  const changeGetMarsNft = (e) => {
+    setDetailNft(e.target.value);
+  };
+
+  const [saleNftId, setDetailNft] = useState();
+  const [detialNftOwner, setDetailNftOwner] = useState();
+
+  const createSale = async () => {
+    const contract = new web3.eth.Contract(
+      SALE_FACTORY.abi,
+      SALE_FACTORY_ADDRESS
+    );
+    await contract.methods
+      .createSale(MARS_CONTRACT_ADDRESS, saleNftId, detialNftOwner, 3)
+      .send({ from: account });
+  };
+
+  const cancelSale = async () => {
+    const contract = new web3.eth.Contract(
+      SALE_FACTORY.abi,
+      SALE_FACTORY_ADDRESS
+    );
+    await contract.methods
+      .cancel(MARS_CONTRACT_ADDRESS, saleNftId)
+      .send({ from: account });
+  };
+
+  const buySale = async () => {
+    const contract = new web3.eth.Contract(
+      SALE_FACTORY.abi,
+      SALE_FACTORY_ADDRESS
+    );
+    await contract.methods
+      .buy(MARS_CONTRACT_ADDRESS, saleNftId, buyer)
+      .send({ from: account });
+  };
+
+  const changeBuyerAddress = (e) => {
+    setBuyer(e.target.value);
+  };
+
+  const [buyer, setBuyer] = useState();
+
   useEffect(() => {
     getCntToken();
   }, [account]);
@@ -266,6 +316,27 @@ function App() {
         />{" "}
         <br />
         <button onClick={combMarsNFT}>조합</button>
+        <hr />
+        판매할 Mars NFT Id{" "}
+        <input
+          type="text"
+          name="nft_address"
+          id="nft_address"
+          onChange={changeGetMarsNft}
+        />{" "}
+        <br />
+        Owner :{detialNftOwner}
+        {/* isSale : {isSale} */} <br />
+        <button onClick={getNftDetail}>상태 확인</button>{" "}
+        <button onClick={createSale}>판매 등록</button>{" "}
+        <button onClick={cancelSale}>등록 취소</button> <br />
+        <input
+          type="text"
+          name="nft_address"
+          id="nft_address"
+          onChange={changeBuyerAddress}
+        />
+        <button onClick={buySale}>구매</button>{" "}
       </div>
     </div>
   );
