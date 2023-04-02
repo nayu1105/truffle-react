@@ -86,7 +86,7 @@ contract MARS_NFT is ERC721  {
         // burn 하기 전에 nft1 과 nft2에서 각 유전정보 가지고 조합한 값을 빼놓아야함
         
     }
-    // 2차 조합 -> 띵수가 짰음.
+    // 2차 조합 -> 다른 팀원이 짰음
     // function mint2(string memory tokenURI, uint64 nftDna1, uint64 nftDna2, uint256 nonce) public {
         
     // }
